@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+    <script type="text/javascript" src="http://mbostock.github.com/d3/d3.js?1.29.1"></script>
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://d3js.org/colorbrewer.v1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="index.css">
+</head>
+<body>
+    <div id="filter">
+    	<div id = "likes">
+		    <h3>Likes Filter</h3>
+		    <input class="filter_likes" id="20" type="radio" name="likes">0-20 Likes</input><br>
+		    <input class="filter_likes" id="50" type="radio" name="likes">20-50 Likes</input><br>
+		    <input class="filter_likes" id="100" type="radio" name="likes">50-100 Likes</input><br>
+		    <input class="filter_likes" id="200" type="radio" name="likes">100+ Likes</input><br>
+		</div>
+
+		<div id = "hugs">
+			<h3>Hugs Filter</h3>
+		    <input class="filter_hugs" id="20hugs" type="checkbox">0-20 Hugs</input><br>
+		    <input class="filter_hugs" id="20hugs" type="checkbox">20-50 Hugs</input><br>
+		    <input class="filter_hugs" id="100hugs" type="checkbox">50-100 Hugs</input><br>
+		    <input class="filter_hugs" id="400hugs" type="checkbox">100+ Hugs</input><br>
+		</div>
+
+		<div id = "metoos">
+			<h3>Metoos Filter</h3>
+		    <input class="filter_metoos" id="20metoos" type="checkbox">0-20 Me toos</input><br>
+		    <input class="filter_metoos" id="50metoos" type="checkbox">20-50 Me toos</input><br>
+		    <input class="filter_metoos" id="100metoos" type="checkbox">50-100 Me toos</input><br>
+		    <input class="filter_metoos" id="400metoos" type="checkbox">100+ Me toos</input><br>
+		</div>
+    </div>
+
+    <div id = "scatterplot">
+
+ 	</div>    
+
+<script>
+// Add Filter
+var likes_filter=0;
+// post_board(likes_filter);
+drawTopics(likes_filter);
+d3.selectAll(".filter_likes").on("change", function() {
+  
+  var type = this.value;
+    if(this.class="filter_likes"){
+          if(this.checked){
+            likes_filter=this.id;
+          }
+          else {likes_filter=0;}
+          console.log(likes_filter);
+          // post_board(likes_filter);
+          drawTopics(likes_filter);
+    }
+ });
+//Add Text
+function post_board(likes_filter){
+d3.selectAll(".text").remove();
+d3.csv("data/sentimentallistoutput1202.csv")
+    .row(function(d) { return {  ID: d.ID, 
+                                 PostID: d.PostID, 
+                                 text: d.Text,
+                                 URL:d.URL, 
+                                 Likes:+d.Likes,
+                                 Hugs:+d.Hugs,
+                                 MeToos:+d.Metoos,
+                                 sentiment: +d.sentiment,
+                                 sentiment_tag: d.sentiment_tag,
+                                 polarity: +d.polarity,
+                                 polarity_tag: +d.polarity_tag,
+                                 concept_text: d.concept_text,
+                                 concept_type: d.concept_type};
+    })
+    .get(function(error, rows) { 
+      // console.log(rows);
+      for(var i=0; i<rows.length;i++){
+            if(rows[i].Likes>=likes_filter){
+              d3.select("#scatterplot")
+                 .append("p")
+                 .attr("class", "text")
+                 .attr("transform", "translate(100,"+i*20+")")
+                 .append("text")
+                 .style("font-weight", "bold")
+                 .style("text-anchor", "left")
+                 .text("Post Text: "+rows[i].text)
+                 .append("p")
+                 .text(" Likes: "+ rows[i].Likes +" Hugs: "+ rows[i].Hugs + " Me Toos: "+rows[i].MeToos); 
+            }
+       }
+    });
+}   
+
+//draw xy axis
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width = 500 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var x = d3.scale.linear()
+    .range([0, width]);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+var color = d3.scale.category10();
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+var svg = d3.select("#scatterplot").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .attr("class", "sp")
+  	.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.csv("data/sentimentallistoutput1202.csv", function(error, data) {
+  data.forEach(function(d) {
+    d.sentiment = +d.sentiment;
+    d.polarity = +d.polarity;
+  });
+
+  y.domain(d3.extent(data, function(d) { return d.sentiment; })).nice();
+  x.domain(d3.extent(data, function(d) { return d.polarity; })).nice();
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height/2 + ")")
+      .call(xAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("x", width)
+      .attr("y", -6)
+      .style("text-anchor", "end")
+      .text("sentiment");
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+    .append("text")
+      .attr("class", "label")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .style("text-anchor", "end")
+      .text("polarity");
+
+	// svg.selectAll(".dot")
+	//   .data(data)
+	// .enter().append("circle")
+	//   .attr("class", "dot")
+	//   .attr("r", 3.5)
+	//   .attr("cx", function(d) { return x(d.polarity); })
+	//   .attr("cy", function(d) { return y(d.sentiment); })
+	//   .style("fill", function(d) { return color(d.species); });
+
+});
+
+function drawTopics(likes_filter){
+	d3.selectAll(".dot").remove();
+	d3.selectAll(".text").remove();
+	d3.csv("data/sentimentallistoutput1202.csv")
+		.row(function(d) { return {  ID: d.ID, 
+		                             PostID: d.PostID, 
+		                             text: d.Text,
+		                             URL:d.URL, 
+		                             Likes:+d.Likes,
+		                             Hugs:+d.Hugs,
+		                             MeToos:+d.Metoos,
+		                             sentiment: +d.sentiment,
+		                             sentiment_tag: d.sentiment_tag,
+		                             polarity: +d.polarity,
+		                             polarity_tag: +d.polarity_tag,
+		                             concept_text: d.concept_text,
+		                             concept_type: d.concept_type};
+		})
+	    .get(function(error, rows) { 
+	      // console.log(rows);
+	      //draw xy axis
+	      	y.domain(d3.extent(rows, function(d) { return d.sentiment; })).nice();
+  			x.domain(d3.extent(rows, function(d) { return d.polarity; })).nice();
+  			var color = d3.scale.category10();
+  			var margin = {top: 20, right: 20, bottom: 30, left: 40}
+
+	      for(var i=0; i<rows.length;i++){
+	            if(rows[i].Likes>=likes_filter){
+	            		d3.select(".sp")
+					 // 	.data(rows)
+						// .enter()
+						.append("g")
+						.append("circle")
+					  	.attr("class", "dot")
+					  	.attr("r",5)
+					  	.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+					  	.attr("cx", x(rows[i].polarity))
+					  	.attr("cy", y(rows[i].sentiment))
+					  	.style("fill", "yellow");
+					  	// .attr("cx", function(d) { return x(d.polarity); })
+					  	// .attr("cy", function(d) { return y(d.sentiment); })
+					  	//.style("fill", function(d) { return color(d.concept_type); });
+
+	              // d3.select("#scatterplot")
+	              //    .append("p")
+	              //    .attr("class", "text")
+	              //    .attr("transform", "translate(100,"+i*20+")")
+	              //    .append("text")
+	              //    .style("font-weight", "bold")
+	              //    .style("text-anchor", "left")
+	              //    .text("Post Text: "+rows[i].text)
+	              //    .append("p")
+	              //    .text(" Likes: "+ rows[i].Likes +" Hugs: "+ rows[i].Hugs + " Me Toos: "+rows[i].MeToos); 
+	            }
+	       }
+	    });
+
+
+}
+
+
+</script>
+
+
+</body>
+</html>
