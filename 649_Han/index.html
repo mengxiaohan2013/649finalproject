@@ -37,13 +37,19 @@
 		    <input class="filter_metoos" id="400metoos" type="checkbox">100+ Me toos</input><br>
 		</div>
     </div>
-    <div id = "scatterplot"></div>    
+
+    <div id = "scatterplot"><h2>Topics</h2> </div>  
+    <div id = "keywords"><h2>Keywords</h2> </div>  
+    <div id = "postboard"><h2>Post Board</h2>  
+    </div>    
 
 <script>
 // Add Filter
 var likes_filter=0;
 // post_board(likes_filter);
 drawTopics(likes_filter);
+post_board(likes_filter);
+
 d3.selectAll(".filter_likes").on("change", function() {
   
   var type = this.value;
@@ -53,14 +59,15 @@ d3.selectAll(".filter_likes").on("change", function() {
           }
           else {likes_filter=0;}
           console.log(likes_filter);
-          // post_board(likes_filter);
           drawTopics(likes_filter);
+          post_board(likes_filter);
     }
+drawKeywords();
  });
 //Add Text
 function post_board(likes_filter){
-d3.selectAll(".text").remove();
-d3.csv("data/sentimentallistoutput1202.csv")
+    d3.selectAll(".text").remove();
+    d3.csv("data/sentimentallistoutput1202.csv")
     .row(function(d) { return {  ID: d.ID, 
                                  PostID: d.PostID, 
                                  text: d.Text,
@@ -79,7 +86,7 @@ d3.csv("data/sentimentallistoutput1202.csv")
       // console.log(rows);
       for(var i=0; i<rows.length;i++){
             if(rows[i].Likes>=likes_filter){
-              d3.select("#scatterplot")
+              d3.select("#postboard")
                  .append("p")
                  .attr("class", "text")
                  .attr("transform", "translate(100,"+i*20+")")
@@ -93,6 +100,7 @@ d3.csv("data/sentimentallistoutput1202.csv")
        }
     });
 }   
+
 
 //draw xy axis
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
@@ -164,6 +172,7 @@ d3.csv("data/sentimentallistoutput1202.csv", function(error, data) {
 
 });
 
+
 function drawTopics(likes_filter){
 	d3.selectAll(".dot").remove();
 	d3.selectAll(".text").remove();
@@ -202,25 +211,35 @@ function drawTopics(likes_filter){
 					  	.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 					  	.attr("cx", x(rows[i].polarity))
 					  	.attr("cy", y(rows[i].sentiment))
-					  	.style("fill", "yellow");
-					  	// .attr("cx", function(d) { return x(d.polarity); })
-					  	// .attr("cy", function(d) { return y(d.sentiment); })
-					  	//.style("fill", function(d) { return color(d.concept_type); });
-
-	              // d3.select("#scatterplot")
-	              //    .append("p")
-	              //    .attr("class", "text")
-	              //    .attr("transform", "translate(100,"+i*20+")")
-	              //    .append("text")
-	              //    .style("font-weight", "bold")
-	              //    .style("text-anchor", "left")
-	              //    .text("Post Text: "+rows[i].text)
-	              //    .append("p")
-	              //    .text(" Likes: "+ rows[i].Likes +" Hugs: "+ rows[i].Hugs + " Me Toos: "+rows[i].MeToos); 
+					  	.style("fill", "#cfecf3");
+					  	
 	            }
 	       }
 	    });
 
+drawKeywords();
+function drawKeywords(){
+      d3.csv("data/keywords_frequency.csv")
+      .row(function(d) { 
+        return {  Keywords: d.Keywords, 
+                  Frequency: +d.Frequency};
+
+      })
+      .get(function(error, row_keywords) { 
+        //console.log(row_keywords[1].Keywords);
+         for(var i=0; i<30;i++){
+             d3.select("#keywords")
+               .append("p")
+               .attr("class", "text")
+               .attr("transform", "translate(100,"+i*20+")")
+               .append("text")
+               .style("font-weight", "bold")
+               .style("text-anchor", "left")
+               .text(row_keywords[i].Keywords+" : "+row_keywords[i].Frequency); 
+        }
+           
+      });
+}
 
 }
 
