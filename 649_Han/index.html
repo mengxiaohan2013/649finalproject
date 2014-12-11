@@ -40,8 +40,8 @@
 
     <div id = "scatterplot"><h2>Topics</h2> </div>  
     <div id = "keywords"><h2>Keywords</h2> </div>  
-    <div id = "postboard"><h2>Post Board</h2>  
-    </div>    
+    <div id="keywords_rect"></div>
+    <div id = "postboard"><h2>Post Board</h2></div>    
 
 <script>
 // Add Filter
@@ -194,7 +194,7 @@ function drawTopics(likes_filter){
 	    .get(function(error, rows) { 
 	      // console.log(rows);
 	      //draw xy axis
-	      	y.domain(d3.extent(rows, function(d) { return d.sentiment; })).nice();
+	      y.domain(d3.extent(rows, function(d) { return d.sentiment; })).nice();
   			x.domain(d3.extent(rows, function(d) { return d.polarity; })).nice();
   			var color = d3.scale.category10();
   			var margin = {top: 20, right: 20, bottom: 30, left: 40}
@@ -202,7 +202,7 @@ function drawTopics(likes_filter){
 	      for(var i=0; i<rows.length;i++){
 	            if(rows[i].Likes>=likes_filter){
 	            		d3.select(".sp")
-					 // 	.data(rows)
+					  // .data(rows)
 						// .enter()
 						.append("g")
 						.append("circle")
@@ -212,12 +212,17 @@ function drawTopics(likes_filter){
 					  	.attr("cx", x(rows[i].polarity))
 					  	.attr("cy", y(rows[i].sentiment))
 					  	.style("fill", "#cfecf3");
-					  	
 	            }
 	       }
 	    });
 
 drawKeywords();
+// var chart = d3.select("#keywords") 
+//   .append('svg')
+//   .attr('class', 'chart')
+//   .attr('width', "300px");
+
+var rect= d3.select("#keywords_rect").append("svg:svg").attr("height", 550);
 function drawKeywords(){
       d3.csv("data/keywords_frequency.csv")
       .row(function(d) { 
@@ -232,10 +237,18 @@ function drawKeywords(){
                .append("p")
                .attr("class", "text")
                .attr("transform", "translate(100,"+i*20+")")
+               .attr("width", "30px")
                .append("text")
                .style("font-weight", "bold")
                .style("text-anchor", "left")
-               .text(row_keywords[i].Keywords+" : "+row_keywords[i].Frequency); 
+               .text(row_keywords[i].Keywords);
+             
+            rect.append("svg:rect")       // attach a rectangle
+              .attr("x", 0)         // position the left of the rectangle
+              .attr("y", 16*i+50) 
+              .attr("fill","#666")         // position the top of the rectangle
+              .attr("height", 10)    // set the height
+              .attr("width", row_keywords[i].Frequency);    // set the width
         }
            
       });

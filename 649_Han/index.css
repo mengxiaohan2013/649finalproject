@@ -38,7 +38,7 @@ padding: 20px;
 	margin-right:5%;
 	position: relative;
 	padding: 20px;
-	width: 90%;
+	width: 86%;
 	height: 200px;
 	overflow-y: scroll;
 	border: 1px #444 solid;
@@ -55,15 +55,22 @@ padding: 20px;
 	padding: 20px;
 }
 #keywords{
-	width: 400px;
+	width: 50px;
 	height: 500px;
-	float: right;
+	float: left;
 	position: relative;
 	margin-top: 15%;
 	padding: 20px;
 }
 #keywords p{
 	line-height: 4px;
+}
+#keywords_rect{
+	width: 250px;
+	float: left;
+	position: relative;
+	margin-top: 15%;
+	padding: 20px;
 }
 .axis path,
 .axis line {
