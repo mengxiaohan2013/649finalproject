@@ -188,8 +188,8 @@ function drawTopics(likes_filter){
 		                             sentiment_tag: d.sentiment_tag,
 		                             polarity: +d.polarity,
 		                             polarity_tag: +d.polarity_tag,
-		                             concept_text: d.concept_text,
-		                             concept_type: d.concept_type};
+		                             concept_text: d.concept_text, //changed to TopicNum in the new data file
+		                             concept_type: d.concept_type}; //changed to TopicText in the new data file
 		})
 	    .get(function(error, rows) { 
 	      // console.log(rows);
