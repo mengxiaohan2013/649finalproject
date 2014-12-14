@@ -195,8 +195,8 @@ d3.csv("data/all_topic"+data_num+".csv")
                                    sentiment_tag: d.sentiment_tag,
                                    polarity: +d.polarity,
                                    polarity_tag: +d.polarity_tag,
-                                   concept_text: d.concept_text, //changed to TopicNum in the new data file
-                                   concept_type: d.concept_type}; //changed to TopicText in the new data file
+                                   TopicNum: d.TopicNum, //changed to TopicNum in the new data file
+                                   TopicText: d.TopicText}; //changed to TopicText in the new data file
       })
       .get(function(error, rows) { 
           data_length=rows.length;
@@ -206,7 +206,7 @@ return data_length;
 
 function drawTopics_num(data_num){
 	d3.selectAll(".dot").remove();
-	d3.selectAll(".text").remove();
+	d3.selectAll(".txt").remove();
 	var data_length;
   d3.csv("data/all_topic"+data_num+".csv")
   		.row(function(d) { return {  ID: d.ID, 
@@ -220,8 +220,8 @@ function drawTopics_num(data_num){
   		                             sentiment_tag: d.sentiment_tag,
   		                             polarity: +d.polarity,
   		                             polarity_tag: +d.polarity_tag,
-  		                             concept_text: d.concept_text, //changed to TopicNum in the new data file
-  		                             concept_type: d.concept_type}; //changed to TopicText in the new data file
+  		                             TopicNum: d.TopicNum, //changed to TopicNum in the new data file
+                                   TopicText: d.TopicText}; //changed to TopicText in the new data file
   		})
 	    .get(function(error, rows) { 
 	      // console.log(rows);
@@ -263,6 +263,14 @@ function drawTopics_num(data_num){
                 .attr("cx", x(polar_median))
                 .attr("cy", y(senti_median))
                 .style("fill", "#cfecf3");
+
+                d3.select(".sp")
+                .append("text")
+                .attr("class", "txt")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+                .attr("x", x(polar_median))
+                .attr("y", y(senti_median))
+                .text(data_num);
 	    });
 }
 
