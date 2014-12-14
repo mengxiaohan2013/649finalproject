@@ -47,7 +47,7 @@
 // Add Filter
 var likes_filter=0;
 // post_board(likes_filter);
-drawTopics(likes_filter);
+drawTopics();
 post_board(likes_filter);
 
 d3.selectAll(".filter_likes").on("change", function() {
@@ -59,7 +59,7 @@ d3.selectAll(".filter_likes").on("change", function() {
           }
           else {likes_filter=0;}
           console.log(likes_filter);
-          drawTopics(likes_filter);
+          drawTopics();
           post_board(likes_filter);
     }
 drawKeywords();
@@ -67,7 +67,7 @@ drawKeywords();
 //Add Text
 function post_board(likes_filter){
     d3.selectAll(".text").remove();
-    d3.csv("data/sentimentallistoutput1202.csv")
+    d3.csv("data/all_topic0.csv")
     .row(function(d) { return {  ID: d.ID, 
                                  PostID: d.PostID, 
                                  text: d.Text,
@@ -83,8 +83,8 @@ function post_board(likes_filter){
                                  concept_type: d.concept_type};
     })
     .get(function(error, rows) { 
-      // console.log(rows);
-      for(var i=0; i<rows.length;i++){
+      // console.log(rows); i<rows.length
+      for(var i=0; i<10;i++){ //show 10 posts
             if(rows[i].Likes>=likes_filter){
               d3.select("#postboard")
                  .append("p")
@@ -112,6 +112,9 @@ var x = d3.scale.linear()
 
 var y = d3.scale.linear()
     .range([height, 0]);
+
+var r = d3.scale.linear()
+    .range([2,20]);
 
 var color = d3.scale.category10();
 
@@ -148,7 +151,7 @@ d3.csv("data/sentimentallistoutput1202.csv", function(error, data) {
       .attr("x", width)
       .attr("y", -6)
       .style("text-anchor", "end")
-      .text("sentiment");
+      .text("polarity");
 
   svg.append("g")
       .attr("class", "y axis")
@@ -159,7 +162,7 @@ d3.csv("data/sentimentallistoutput1202.csv", function(error, data) {
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text("polarity");
+      .text("sentiment");
 
 	// svg.selectAll(".dot")
 	//   .data(data)
@@ -172,55 +175,98 @@ d3.csv("data/sentimentallistoutput1202.csv", function(error, data) {
 
 });
 
+function drawTopics(){
+  for (var i = 0; i < 10; i++) {
+      drawTopics_num(i);
+  };
+}
 
-function drawTopics(likes_filter){
+function drawTopics_radius(data_num){
+var data_length=0;
+d3.csv("data/all_topic"+data_num+".csv")
+      .row(function(d) { return {  ID: d.ID, 
+                                   PostID: d.PostID, 
+                                   text: d.Text,
+                                   URL:d.URL, 
+                                   Likes:+d.Likes,
+                                   Hugs:+d.Hugs,
+                                   MeToos:+d.Metoos,
+                                   sentiment: +d.sentiment,
+                                   sentiment_tag: d.sentiment_tag,
+                                   polarity: +d.polarity,
+                                   polarity_tag: +d.polarity_tag,
+                                   concept_text: d.concept_text, //changed to TopicNum in the new data file
+                                   concept_type: d.concept_type}; //changed to TopicText in the new data file
+      })
+      .get(function(error, rows) { 
+          data_length=rows.length;
+      });
+return data_length;
+}
+
+function drawTopics_num(data_num){
 	d3.selectAll(".dot").remove();
 	d3.selectAll(".text").remove();
-	d3.csv("data/sentimentallistoutput1202.csv")
-		.row(function(d) { return {  ID: d.ID, 
-		                             PostID: d.PostID, 
-		                             text: d.Text,
-		                             URL:d.URL, 
-		                             Likes:+d.Likes,
-		                             Hugs:+d.Hugs,
-		                             MeToos:+d.Metoos,
-		                             sentiment: +d.sentiment,
-		                             sentiment_tag: d.sentiment_tag,
-		                             polarity: +d.polarity,
-		                             polarity_tag: +d.polarity_tag,
-		                             concept_text: d.concept_text, //changed to TopicNum in the new data file
-		                             concept_type: d.concept_type}; //changed to TopicText in the new data file
-		})
+	var data_length;
+  d3.csv("data/all_topic"+data_num+".csv")
+  		.row(function(d) { return {  ID: d.ID, 
+  		                             PostID: d.PostID, 
+  		                             text: d.Text,
+  		                             URL:d.URL, 
+  		                             Likes:+d.Likes,
+  		                             Hugs:+d.Hugs,
+  		                             MeToos:+d.Metoos,
+  		                             sentiment: +d.sentiment,
+  		                             sentiment_tag: d.sentiment_tag,
+  		                             polarity: +d.polarity,
+  		                             polarity_tag: +d.polarity_tag,
+  		                             concept_text: d.concept_text, //changed to TopicNum in the new data file
+  		                             concept_type: d.concept_type}; //changed to TopicText in the new data file
+  		})
 	    .get(function(error, rows) { 
 	      // console.log(rows);
 	      //draw xy axis
 	      y.domain(d3.extent(rows, function(d) { return d.sentiment; })).nice();
   			x.domain(d3.extent(rows, function(d) { return d.polarity; })).nice();
   			var color = d3.scale.category10();
-  			var margin = {top: 20, right: 20, bottom: 30, left: 40}
+  			var margin = {top: 20, right: 20, bottom: 30, left: 40};
+        var senti_values = [];
+        var polar_values = [];
+        //var mean = d3.mean()
+        // var mean = d3.mean();
+        /*Draw topics based on like filter*/
+        var senti_count=0;
+        var polar_count=0;
+        var data_length=rows.length;
+      	     for(var i=0; i<rows.length;i++){
 
-	      for(var i=0; i<rows.length;i++){
-	            if(rows[i].Likes>=likes_filter){
-	            		d3.select(".sp")
-					  // .data(rows)
-						// .enter()
-						.append("g")
-						.append("circle")
-					  	.attr("class", "dot")
-					  	.attr("r",5)
-					  	.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-					  	.attr("cx", x(rows[i].polarity))
-					  	.attr("cy", y(rows[i].sentiment))
-					  	.style("fill", "#cfecf3");
-	            }
-	       }
+                if(rows[i].sentiment >=-1 && rows[i].sentiment <=1){
+                   senti_values[senti_count] = rows[i].sentiment;
+                   senti_count++;
+                }
+                if(rows[i].polarity >=0 && rows[i].polarity <=1){
+                   polar_values[polar_count] = rows[i].polarity;
+                   polar_count++;
+                }
+  	        }
+            var senti_median = d3.median(senti_values);
+            var polar_median = d3.median(polar_values);
+            console.log("polarity"+data_num+": "+polar_median);
+            console.log("sentiment"+data_num+": "+senti_median);
+           //     if(rows[i].Likes>=likes_filter){
+                d3.select(".sp")
+                .append("g")
+                .append("circle")
+                .attr("class", "dot")
+                .attr("r",5)
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+                .attr("cx", x(polar_median))
+                .attr("cy", y(senti_median))
+                .style("fill", "#cfecf3");
 	    });
+}
 
 drawKeywords();
-// var chart = d3.select("#keywords") 
-//   .append('svg')
-//   .attr('class', 'chart')
-//   .attr('width', "300px");
 
 var rect= d3.select("#keywords_rect").append("svg:svg").attr("height", 550);
 function drawKeywords(){
@@ -228,7 +274,6 @@ function drawKeywords(){
       .row(function(d) { 
         return {  Keywords: d.Keywords, 
                   Frequency: +d.Frequency};
-
       })
       .get(function(error, row_keywords) { 
         //console.log(row_keywords[1].Keywords);
@@ -254,7 +299,7 @@ function drawKeywords(){
       });
 }
 
-}
+
 
 
 </script>
