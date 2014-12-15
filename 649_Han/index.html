@@ -13,34 +13,34 @@
 </head>
 <body>
     <div id="filter">
-    	<div id = "likes">
-		    <h3>Likes Filter</h3>
-		    <input class="filter_likes" id="20" type="radio" name="likes">0-20 Likes</input><br>
-		    <input class="filter_likes" id="50" type="radio" name="likes">20-50 Likes</input><br>
-		    <input class="filter_likes" id="100" type="radio" name="likes">50-100 Likes</input><br>
-		    <input class="filter_likes" id="200" type="radio" name="likes">100+ Likes</input><br>
-		</div>
+      <div id = "likes">
+        <h3>Likes Filter</h3>
+        <input class="filter_likes" id="20" type="radio" name="likes">0-20 Likes</input><br>
+        <input class="filter_likes" id="50" type="radio" name="likes">20-50 Likes</input><br>
+        <input class="filter_likes" id="100" type="radio" name="likes">50-100 Likes</input><br>
+        <input class="filter_likes" id="200" type="radio" name="likes">100+ Likes</input><br>
+    </div>
 
-		<div id = "hugs">
-			<h3>Hugs Filter</h3>
-		    <input class="filter_hugs" id="20hugs" type="radio" name="hugs">0-20 Hugs</input><br>
-		    <input class="filter_hugs" id="20hugs" type="radio" name="hugs">20-50 Hugs</input><br>
-		    <input class="filter_hugs" id="100hugs" type="radio" name="hugs">50-100 Hugs</input><br>
-		    <input class="filter_hugs" id="400hugs" type="radio"  name="hugs">100+ Hugs</input><br>
-		</div>
+    <div id = "hugs">
+      <h3>Hugs Filter</h3>
+        <input class="filter_hugs" id="20hugs" type="radio" name="hugs">0-20 Hugs</input><br>
+        <input class="filter_hugs" id="20hugs" type="radio" name="hugs">20-50 Hugs</input><br>
+        <input class="filter_hugs" id="100hugs" type="radio" name="hugs">50-100 Hugs</input><br>
+        <input class="filter_hugs" id="400hugs" type="radio"  name="hugs">100+ Hugs</input><br>
+    </div>
 
-		<div id = "metoos">
-			<h3>Metoos Filter</h3>
-		    <input class="filter_metoos" id="20metoos" type="radio" name="metoos">0-20 Me toos</input><br>
-		    <input class="filter_metoos" id="50metoos" type="radio" name="metoos">20-50 Me toos</input><br>
-		    <input class="filter_metoos" id="100metoos" type="radio"  name="metoos">50-100 Me toos</input><br>
-		    <input class="filter_metoos" id="400metoos" type="radio" name="metoos">100+ Me toos</input><br>
-		</div>
+    <div id = "metoos">
+      <h3>Metoos Filter</h3>
+        <input class="filter_metoos" id="20metoos" type="radio" name="metoos">0-20 Me toos</input><br>
+        <input class="filter_metoos" id="50metoos" type="radio" name="metoos">20-50 Me toos</input><br>
+        <input class="filter_metoos" id="100metoos" type="radio"  name="metoos">50-100 Me toos</input><br>
+        <input class="filter_metoos" id="400metoos" type="radio" name="metoos">100+ Me toos</input><br>
+    </div>
     </div>
 
     <div id = "scatterplot"><h2>Topics</h2> </div>  
-    <div id = "keywords"><h2>Keywords</h2> </div>  
     <div id="keywords_rect"></div>
+    <div id = "keywords"></div>
     <div id = "postboard"><h2>Post Board</h2></div>    
 
 <script>
@@ -48,7 +48,7 @@
 var likes_filter=0;
 
 // post_board(likes_filter);
-drawTopics();
+//drawTopics();
 post_board(likes_filter);
 
 d3.selectAll(".filter_likes").on("change", function() {
@@ -131,7 +131,7 @@ var svg = d3.select("#scatterplot").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .attr("class", "sp")
-  	.append("g")
+    .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 d3.csv("data/sentimentallistoutput1202.csv", function(error, data) {
@@ -165,14 +165,14 @@ d3.csv("data/sentimentallistoutput1202.csv", function(error, data) {
       .style("text-anchor", "end")
       .text("sentiment");
 
-	// svg.selectAll(".dot")
-	//   .data(data)
-	// .enter().append("circle")
-	//   .attr("class", "dot")
-	//   .attr("r", 3.5)
-	//   .attr("cx", function(d) { return x(d.polarity); })
-	//   .attr("cy", function(d) { return y(d.sentiment); })
-	//   .style("fill", function(d) { return color(d.species); });
+  // svg.selectAll(".dot")
+  //   .data(data)
+  // .enter().append("circle")
+  //   .attr("class", "dot")
+  //   .attr("r", 3.5)
+  //   .attr("cx", function(d) { return x(d.polarity); })
+  //   .attr("cy", function(d) { return y(d.sentiment); })
+  //   .style("fill", function(d) { return color(d.species); });
 
 });
 
@@ -206,31 +206,31 @@ return data_length;
 }
 
 function drawTopics_num(data_num){
-	d3.selectAll(".dot").remove();
-	d3.selectAll(".text").remove();
-	var data_length;
+  d3.selectAll(".dot").remove();
+  d3.selectAll(".text").remove();
+  var data_length;
   d3.csv("data/all_topic"+data_num+".csv")
-  		.row(function(d) { return {  ID: d.ID, 
-  		                             PostID: d.PostID, 
-  		                             text: d.Text,
-  		                             URL:d.URL, 
-  		                             Likes:+d.Likes,
-  		                             Hugs:+d.Hugs,
-  		                             MeToos:+d.Metoos,
-  		                             sentiment: +d.sentiment,
-  		                             sentiment_tag: d.sentiment_tag,
-  		                             polarity: +d.polarity,
-  		                             polarity_tag: +d.polarity_tag,
-  		                             concept_text: d.concept_text, //changed to TopicNum in the new data file
-  		                             concept_type: d.concept_type}; //changed to TopicText in the new data file
-  		})
-	    .get(function(error, rows) { 
-	      // console.log(rows);
-	      //draw xy axis
-	      y.domain(d3.extent(rows, function(d) { return d.sentiment; })).nice();
-  			x.domain(d3.extent(rows, function(d) { return d.polarity; })).nice();
-  			var color = d3.scale.category10();
-  			var margin = {top: 20, right: 20, bottom: 30, left: 40};
+      .row(function(d) { return {  ID: d.ID, 
+                                   PostID: d.PostID, 
+                                   text: d.Text,
+                                   URL:d.URL, 
+                                   Likes:+d.Likes,
+                                   Hugs:+d.Hugs,
+                                   MeToos:+d.Metoos,
+                                   sentiment: +d.sentiment,
+                                   sentiment_tag: d.sentiment_tag,
+                                   polarity: +d.polarity,
+                                   polarity_tag: +d.polarity_tag,
+                                   concept_text: d.concept_text, //changed to TopicNum in the new data file
+                                   concept_type: d.concept_type}; //changed to TopicText in the new data file
+      })
+      .get(function(error, rows) { 
+        // console.log(rows);
+        //draw xy axis
+        y.domain(d3.extent(rows, function(d) { return d.sentiment; })).nice();
+        x.domain(d3.extent(rows, function(d) { return d.polarity; })).nice();
+        var color = d3.scale.category10();
+        var margin = {top: 20, right: 20, bottom: 30, left: 40};
         var senti_values = [];
         var polar_values = [];
         //var mean = d3.mean()
@@ -239,7 +239,7 @@ function drawTopics_num(data_num){
         var senti_count=0;
         var polar_count=0;
         var data_length=rows.length;
-      	     for(var i=0; i<rows.length;i++){
+             for(var i=0; i<rows.length;i++){
 
                 if(rows[i].sentiment >=-1 && rows[i].sentiment <=1){
                    senti_values[senti_count] = rows[i].sentiment;
@@ -249,7 +249,7 @@ function drawTopics_num(data_num){
                    polar_values[polar_count] = rows[i].polarity;
                    polar_count++;
                 }
-  	        }
+            }
             var senti_median = d3.median(senti_values);
             var polar_median = d3.median(polar_values);
             //console.log("polarity"+data_num+": "+polar_median);
@@ -264,61 +264,22 @@ function drawTopics_num(data_num){
                 .attr("cx", x(polar_median))
                 .attr("cy", y(senti_median))
                 .style("fill", "#cfecf3");
-	    });
+      });
 }
 
 drawKeywords();
 var WordsText = '';
 var allText;
 //console.log(WordsText);
-var rect= d3.select("#keywords_rect").append("svg:svg").attr("height", 550);
+var rect= d3.select("#keywords_rect").append("svg:svg").attr("height", 250).attr("width", 1000);
 function drawKeywords(){
-      d3.csv("data/all_keywordsfrequency.csv")
+      // This is the overall data frequency
+      /*
+      d3.csv("data/new_all_keywordsfrequency.csv")
       .row(function(d) { 
         return {  Keywords: d.Keywords, 
                   Frequency: +d.Frequency};
       })
-      /*.row(function(d) {
-        //console.log(d);
-        //console.log(WordsText);
-        
-        
-        WordsText = WordsText.concat(d.Keywords)
-        //console.log(d.Keywords);
-        //console.log(WordsText);
-        kWords=d.Keywords.toLowerCase().trim().split(' ')
-
-        for(var i=0; i<kWords.length; i++){
-          console.log(kWords[i]);
-          if(typeof allText[kWords[i]] == 'undefined'){
-            allText[kWords[i]]=1;
-          }
-          else allText[kWords[i]]+=1;
-        }
-        //console.log(kWords.length);
-        //console.log(allText['love']);
-        newallText=getSortedKeys(allText);
-        console.log(newallText)
-        function getSortedKeys(obj) {
-          var keys = []; for(var key in obj) keys.push(key);
-          return keys.sort(function(a,b){return obj[b]-obj[a]});
-        }
-
-        /*
-        var allTextData={}
-        for (var i = 0; i < 30; i++) {
-          allTextData[i]['Keywords'] = newallText[i][0]
-
-        };
-        
-        //for w in kWords:
-          //console.log(w);
-        
-        //console.log(allTextData);
-        
-        return {  Keywords: d.Keywords, 
-                  Frequency: 10};
-      })*/
       .get(function(error, row_keywords) { 
         //console.log(row_keywords[1].Keywords);
          for(var i=0; i<30;i++){
@@ -347,51 +308,52 @@ function drawKeywords(){
         //console.log(allText.indexOf('dh'));
         //console.log(allText)
       });
-      
-      d3.csv("data/topic"+data_num+"_keywordsfrequency.csv")
+      */
+
+      //var rotate = d3.svg.transform().rotate(-90);
+
+      d3.csv("data/topic"+0+"_keywordfrequency.csv")
       .row(function(d) { 
         return {  Keywords: d.Keywords, 
-                  Frequency: +d.Frequency};
+                  Frequency_all: +d.Frequency_all,
+                  Keyword: d.Keyword, 
+                  Frequency_topic: +d.Frequency_topic
+                  };
       })
       
-      .get(function(error, row_keywords0) { 
-        console.log(allText[0]);
+      .get(function(error, row_keywords0) {
          for(var i=0; i<30;i++){
              d3.select("#keywords")
+
                .append("p")
                .attr("class", "text")
                .attr("transform", "translate(100,"+i*20+")")
-               .attr("width", "180px")
+               .attr("width", "1000px")
+               //.attr('transform', "rotate(-45)")
                .append("text")
                .style("font-weight", "bold")
                .style("text-anchor", "left")
-               //.text(row_keywords0[i].Keywords)
+               .text(row_keywords0[i].Keyword)
+               //.attr('transform', "rotate(-90)")
                ;
-            //console.log(allText.indexOf('dh'));
-            for (var j = 0; j < 30; j++) {
-              console.log(allText[j].Keywords);
-              if(allText[j].Keywords==row_keywords0[i].Keywords){
-                  rect.append("svg1:rect")       // attach a rectangle
-                  .attr("x", 0)         // position the left of the rectangle
-                  .attr("y", 16*i+50) 
-                  .attr("fill","orange")         // position the top of the rectangle
-                  .attr("height", 10)    // set the height
-                  .attr("width", row_keywords0[i].Frequency/100)    // set the width
-                  ;
-                }else{
-                  rect.append("svg1:rect")       // attach a rectangle
-                  .attr("x", 0)         // position the left of the rectangle
-                  .attr("y", 16*i+50) 
-                  .attr("fill","orange")         // position the top of the rectangle
-                  .attr("height", 10)    // set the height
-                  .attr("width", 0)    // set the width
-                  ;
-                }
-            };
-            
 
-            //console.log(row_keywords);
-               
+             rect.append("svg:rect")       // attach a rectangle
+              .attr("x", 0)         // position the left of the rectangle
+              .attr("y", 30*i+50) 
+              .attr("fill","#666")         // position the top of the rectangle
+              .attr("height", 20)    // set the height
+              .attr("width", row_keywords0[i].Frequency_all/100)    // set the width
+              .attr('transform', "rotate(-90)")
+              ;
+
+             rect.append("svg1:rect")       // attach a rectangle
+                  .attr("x", 0)         // position the left of the rectangle
+                  .attr("y", 30*i+50) 
+                  .attr("fill","orange")         // position the top of the rectangle
+                  .attr("height", 20)    // set the height
+                  .attr("width", row_keywords0[i].Frequency_topic/100)    // set the width
+                  .attr('transform', "rotate(-90)")
+                  ;               
         }
            
       });
