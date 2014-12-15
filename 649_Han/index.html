@@ -10,8 +10,17 @@
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="http://d3js.org/colorbrewer.v1.min.js"></script>
     <link rel="stylesheet" type="text/css" href="index.css">
+    <title>ScaryMommy Confession Board Data Visualization</title>
+
 </head>
 <body>
+  <header>
+  ScaryMommy Confession Board Data Visualization
+  </header>
+
+  <div id="topics"></div>
+  <!-- <div id = "heatmap"></div>
+  
     <div id="filter">
     	<div id = "likes">
 		    <h3>Likes Filter</h3>
@@ -36,18 +45,155 @@
 		    <input class="filter_metoos" id="100metoos" type="radio"  name="metoos">50-100 Me toos</input><br>
 		    <input class="filter_metoos" id="400metoos" type="radio" name="metoos">100+ Me toos</input><br>
 		</div>
-    </div>
+    </div> -->
 
-    <div id = "scatterplot"><h2>Topics</h2> </div>  
-    <div id = "keywords"><h2>Keywords</h2> </div>  
+    <!-- <div id = "scatterplot"><h2>Topics</h2> </div>  --> 
+    
     <div id="keywords_rect"></div>
+    <div id = "keywords"> </div>  
     <div id = "postboard"><h2>Post Board</h2></div>    
 
 <script>
+  //draw ten topic circles
+  var Topic_frequency = [{"name":"love husband sex good years", "num":18663, "topic_num": 0},{name:"today didn told wanted made", "num":15115, "topic_num": 1},{name:"dh fucking fuck shit ass", "num":11457, "topic_num": 2},{name:"day time work home house", "num":18862, "topic_num": 3}, {name: "hate people friends family friend", "num": 21771, "topic_num": 4},{name: "eat fat food big dinner", "num": 26240, "topic_num": 5},{name: "kids mom kid im child", "num": 23141, "topic_num": 6},{name:"baby back year son school","num":23794, "topic_num": 7},{name: "dd ds night dh bed", "num":30837, "topic_num": 8},{name: "don feel bad make life", "num":31849, "topic_num": 9}];
+
+  Topic_frequency.sort(function(a, b){ return (b.num - a.num); })
+
+
+    var color = d3.scale.category10();
+   var topicC = d3.select("#topics").append("svg")
+      .attr("width", 1300)
+      .attr("height", 200);
+
+   var circles = topicC.selectAll("g")
+      .data(Topic_frequency)
+      .enter()
+      .append("g")
+      .append("circle")
+      .attr("r", function(d,i){
+          return (d.num/1000);
+      })
+      .attr("cx", function(d,i){ return (i*100+100);})
+      .attr("cy", 50)
+      .style("fill", function(d, i) { return color(i); })
+      .on("mouseover", function(d, i){
+
+            drawKeywords(d.topic_num);
+      });
+      // .append("svg:title")
+      // .text(function(d) { return "Topic Frequency: " + d.num; });
+
+
+    //draw topic title under topic circles
+    d3.selectAll("g")
+      .data(Topic_frequency)
+      .append("text")
+      .each(function(d){
+        var word = d.name.split(" ");
+        for( var j=0; j<word.length; j++){
+          d3.select(this).append("tspan")
+          .text(function(d,i){
+            // console.log(word[j]);
+            return word[j];
+            })
+          .attr("dy", j ? "1.2em" : 0)
+          .attr("x", 0)
+          .attr("text-anchor", "middle");
+        }
+      })
+      .attr("transform", function(d,i){return "translate(" +(i*100+100)+", 100)"})
+      .style("fill", function(d, i) { return color(i); });
+
+
+      //add frequence number to circles
+      d3.selectAll("g")
+      .data(Topic_frequency)
+      .append("text")
+      .text(function(d,i){return d.num;})
+      .attr("text-anchor", "middle")
+      .attr("transform", function(d,i){return "translate(" +(i*100+100)+", 55)"})
+      .style("fill", "#0f0f0f");
+
+    //draw heatmap
+    //height of each row in the heatmap
+    //width of each column in the heatmap
+    // var data = [
+    // {score: 0.5, row: 0, col: 0},
+    // {score: 0.7, row: 0, col: 1},
+    // {score: 0.2, row: 1, col: 0},
+    // {score: 0.4, row: 1, col: 1}
+    // ];
+
+    // var gridSize = 50,
+    //   h = gridSize,
+    //   w = gridSize,
+    //   rectPadding = 60;
+
+    // var colorLow = 'green', colorMed = 'yellow', colorHigh = 'red';
+
+    // var margin = {top: 20, right: 80, bottom: 30, left: 50},
+    //   width = 640 - margin.left - margin.right,
+    //   height = 380 - margin.top - margin.bottom;
+
+    // var colorScale = d3.scale.linear()
+    //    .domain([-1, 0, 1])
+    //    .range([colorLow, colorMed, colorHigh]);
+
+    // d3.csv("data/topic0_keywordfrequency.csv")
+    // .row(function(d) { return {  Keywords: d.Keywords, 
+    //                              Frequency_all: +d.Frequency_all, 
+    //                              text: d.Text,
+    //                              URL:d.URL, 
+    //                              Likes:+d.Likes,
+    //                              Hugs:+d.Hugs,
+    //                              MeToos:+d.Metoos,
+    //                              sentiment: +d.sentiment,
+    //                              sentiment_tag: d.sentiment_tag,
+    //                              polarity: +d.polarity,
+    //                              polarity_tag: +d.polarity_tag,
+    //                              concept_text: d.concept_text,
+    //                              concept_type: d.concept_type};
+    // })
+    // .get(function(error, rows) { 
+    //   // console.log(rows); i<rows.length
+    //   for(var i=0; i<10;i++){ //show 10 posts
+    //         if(rows[i].Likes>=likes_filter){
+    //           d3.select("#postboard")
+    //              .append("p")
+    //              .attr("class", "text")
+    //              .attr("transform", "translate(100,"+i*20+")")
+    //              .append("text")
+    //              .style("font-weight", "bold")
+    //              .style("text-anchor", "left")
+    //              .text("Post Text: "+rows[i].text)
+    //              .append("p")
+    //              .text(" Likes: "+ rows[i].Likes +" Hugs: "+ rows[i].Hugs + " Me Toos: "+rows[i].MeToos); 
+    //         }
+    //    }
+    // });
+
+    // var svg = d3.select("#heatmap").append("svg")
+    //   .attr("width", width + margin.left + margin.right)
+    //   .attr("height", height + margin.top + margin.bottom)
+    // .append("g")
+    //   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    // var heatMap = svg.selectAll("#heatmap")
+    //   .data(data, function(d) { return d.col + ':' + d.row; })
+    // .enter().append("svg:rect")
+    //   .attr("x", function(d) { return d.row * w; })
+    //   .attr("y", function(d) { return d.col * h; })
+    //   .attr("width", function(d) { return w; })
+    //   .attr("height", function(d) { return h; })
+    //   .style("fill", function(d) { return colorScale(d.score); });
+
+
+
+
 // Add Filter
 var likes_filter=0;
 // post_board(likes_filter);
-drawTopics();
+// drawTopics();
 post_board(likes_filter);
 
 d3.selectAll(".filter_likes").on("change", function() {
@@ -62,12 +208,12 @@ d3.selectAll(".filter_likes").on("change", function() {
           drawTopics();
           post_board(likes_filter);
     }
-drawKeywords();
+  // drawKeywords(datanum);
  });
 //Add Text
 function post_board(likes_filter){
     d3.selectAll(".text").remove();
-    d3.csv("data/all_topic0.csv")
+    d3.csv("data/newdata_with_sentiment.csv")
     .row(function(d) { return {  ID: d.ID, 
                                  PostID: d.PostID, 
                                  text: d.Text,
@@ -262,6 +408,7 @@ function drawTopics_num(data_num){
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
                 .attr("cx", x(polar_median))
                 .attr("cy", y(senti_median))
+                // .on("click", click)
                 .style("fill", "#cfecf3");
 
                 d3.select(".sp")
@@ -274,11 +421,18 @@ function drawTopics_num(data_num){
 	    });
 }
 
-drawKeywords();
-
-var rect= d3.select("#keywords_rect").append("svg:svg").attr("height", 550);
-function drawKeywords(){
-      d3.csv("data/keywords_frequency.csv")
+// drawKeywords();
+var WordsText = '';
+var allText;
+//console.log(WordsText);
+var rect= d3.select("#keywords_rect").append("svg:svg").attr("height", 250).attr("width", 1000);
+function drawKeywords(data_num){
+      d3.selectAll(".keywordtext").remove();
+      d3.selectAll(".keywordall").remove();
+      d3.selectAll(".keywordtopic").remove();
+      // This is the overall data frequency
+      /*
+      d3.csv("data/new_all_keywordsfrequency.csv")
       .row(function(d) { 
         return {  Keywords: d.Keywords, 
                   Frequency: +d.Frequency};
@@ -290,25 +444,77 @@ function drawKeywords(){
                .append("p")
                .attr("class", "text")
                .attr("transform", "translate(100,"+i*20+")")
-               .attr("width", "30px")
+               .attr("width", "180px")
                .append("text")
                .style("font-weight", "bold")
                .style("text-anchor", "left")
-               .text(row_keywords[i].Keywords);
+               .text(row_keywords[i].Keywords)
+               ;
              
             rect.append("svg:rect")       // attach a rectangle
               .attr("x", 0)         // position the left of the rectangle
               .attr("y", 16*i+50) 
               .attr("fill","#666")         // position the top of the rectangle
               .attr("height", 10)    // set the height
-              .attr("width", row_keywords[i].Frequency);    // set the width
+              .attr("width", row_keywords[i].Frequency/100)    // set the width
+              ;
+               
+        }
+        //console.log(row_keywords)
+        allText=row_keywords
+        //console.log(allText.indexOf('dh'));
+        //console.log(allText)
+      });
+      */
+
+      //var rotate = d3.svg.transform().rotate(-90);
+
+      d3.csv("data/topic"+data_num+"_keywordfrequency.csv")
+      .row(function(d) { 
+        return {  Keywords: d.Keywords, 
+                  Frequency_all: +d.Frequency_all,
+                  Keyword: d.Keyword, 
+                  Frequency_topic: +d.Frequency_topic
+                  };
+      })
+      
+      .get(function(error, row_keywords0) {
+         for(var i=0; i<30;i++){
+             d3.select("#keywords").append("g").append("text")
+               //.attr('transform', "rotate(-45)")
+               .attr("class", "keywordtext")
+              // .attr("x", (30*i+50))         // position the left of the rectangle
+              // .attr("y", 100) 
+               .attr("transform", "translate("+(40*i+60)+", 0)")
+               .style("text-anchor", "top")
+               .text(row_keywords0[i].Keyword)
+               ;
+
+              rect.append("svg:rect")       // attach a rectangle
+              .attr("class", "keywordall")
+              .attr("x", 0)         // position the left of the rectangle
+              .attr("y", 30*i+50) 
+              .attr("fill","#666")         // position the top of the rectangle
+              .attr("height", 20)    // set the height
+              .attr("width", row_keywords0[i].Frequency_all/100)    // set the width
+              .attr('transform', "rotate(-90)")
+              
+              ;
+
+             rect.append("svg1:rect")       // attach a rectangle
+                  .attr("class", "keywordtopic")
+                  .attr("x", 0)         // position the left of the rectangle
+                  .attr("y", 30*i+50) 
+                  .attr("fill","orange")         // position the top of the rectangle
+                  .attr("height", 20)    // set the height
+                  .attr("width", row_keywords0[i].Frequency_topic/100)    // set the width
+                  .attr('transform', "rotate(-90)")
+                  
+                  ;              
         }
            
       });
 }
-
-
-
 
 </script>
 

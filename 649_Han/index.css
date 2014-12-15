@@ -13,7 +13,12 @@ h1,h2{
   color: #000;
   text-align: center;
 }
-
+header{
+	height: 20px;
+	padding-left:5%;
+	border-bottom:1px solid #CCCCCC;  
+	font-family: Geneva;
+}
 #filter{
 	display: block;
 	width:100%;
@@ -54,23 +59,24 @@ padding: 20px;
 /*	border:1px solid black;*/
 	padding: 20px;
 }
+
+#topics{
+	width: 100%;
+	margin-left: 5%;
+}
 #keywords{
-	width: 50px;
-	height: 500px;
-	float: left;
-	position: relative;
-	margin-top: 15%;
-	padding: 20px;
+	width: 100%;
+	/*float: left;*/
+	/*position: relative;*/
+	margin-left: 10%;
+	padding: 5px;
 }
-#keywords p{
-	line-height: 4px;
-}
+
 #keywords_rect{
-	width: 250px;
-	float: left;
-	position: relative;
-	margin-top: 15%;
-	padding: 20px;
+	/*width: 1000px;*/
+	/*position: relative;*/
+/*	margin-top: 15%;
+	padding: 20px;*/
 }
 .axis path,
 .axis line {
@@ -78,3 +84,20 @@ padding: 20px;
   stroke: #000;
   shape-rendering: crispEdges;
 }
+
+div#keywords_rect svg{
+	padding-top: 250px;
+	margin-left: 7%;
+}
+.keywordtext{
+	float:left;
+	margin-left: 2px;
+	-ms-transform:rotate(-45deg); /* IE 9 */
+  	-moz-transform:rotate(-45deg); /* Firefox */
+  	-webkit-transform:rotate(-45deg); /* Safari and Chrome */
+  	-o-transform:rotate(-45deg); /* Opera */
+}
+#keywords_rect svg{
+	height: 10px;
+}
+
