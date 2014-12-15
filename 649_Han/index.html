@@ -39,8 +39,8 @@
     </div>
 
     <div id = "scatterplot"><h2>Topics</h2> </div>  
-    <div id = "keywords"><h2>Keywords</h2> </div>  
     <div id="keywords_rect"></div>
+    <div id = "keywords"></div>
     <div id = "postboard"><h2>Post Board</h2></div>    
 
 <script>
@@ -48,7 +48,7 @@
 var likes_filter=0;
 
 // post_board(likes_filter);
-drawTopics();
+//drawTopics();
 post_board(likes_filter);
 
 d3.selectAll(".filter_likes").on("change", function() {
@@ -271,8 +271,9 @@ drawKeywords();
 var WordsText = '';
 var allText;
 //console.log(WordsText);
-var rect= d3.select("#keywords_rect").append("svg:svg").attr("height", 550);
+var rect= d3.select("#keywords_rect").append("svg:svg").attr("height", 250).attr("width", 1000);
 function drawKeywords(){
+      // This is the overall data frequency
       /*
       d3.csv("data/new_all_keywordsfrequency.csv")
       .row(function(d) { 
@@ -308,7 +309,10 @@ function drawKeywords(){
         //console.log(allText)
       });
       */
-      d3.csv("data/topic"+0+"_keywordfrequency.csv")
+
+      //var rotate = d3.svg.transform().rotate(-90);
+
+      d3.csv("data/topic"+0+"_keywordfrequency.csv") // variable changes to data_num
       .row(function(d) { 
         return {  Keywords: d.Keywords, 
                   Frequency_all: +d.Frequency_all,
@@ -318,61 +322,38 @@ function drawKeywords(){
       })
       
       .get(function(error, row_keywords0) {
-        console.log(row_keywords0)
-        //console.log(allText[0]);
          for(var i=0; i<30;i++){
              d3.select("#keywords")
+
                .append("p")
                .attr("class", "text")
                .attr("transform", "translate(100,"+i*20+")")
-               .attr("width", "180px")
+               .attr("width", "1000px")
+               //.attr('transform', "rotate(-45)")
                .append("text")
                .style("font-weight", "bold")
                .style("text-anchor", "left")
                .text(row_keywords0[i].Keyword)
+               //.attr('transform', "rotate(-90)")
                ;
 
              rect.append("svg:rect")       // attach a rectangle
               .attr("x", 0)         // position the left of the rectangle
-              .attr("y", 16*i+50) 
+              .attr("y", 30*i+50) 
               .attr("fill","#666")         // position the top of the rectangle
-              .attr("height", 10)    // set the height
+              .attr("height", 20)    // set the height
               .attr("width", row_keywords0[i].Frequency_all/100)    // set the width
+              .attr('transform', "rotate(-90)")
               ;
 
              rect.append("svg1:rect")       // attach a rectangle
                   .attr("x", 0)         // position the left of the rectangle
-                  .attr("y", 16*i+50) 
+                  .attr("y", 30*i+50) 
                   .attr("fill","orange")         // position the top of the rectangle
-                  .attr("height", 10)    // set the height
+                  .attr("height", 20)    // set the height
                   .attr("width", row_keywords0[i].Frequency_topic/100)    // set the width
-                  ;
-            //console.log(allText.indexOf('dh'));
-            /*
-            for (var j = 0; j < 30; j++) {
-              console.log(allText[j].Keywords);
-              if(allText[j].Keywords==row_keywords0[i].Keywords){
-                  rect.append("svg1:rect")       // attach a rectangle
-                  .attr("x", 0)         // position the left of the rectangle
-                  .attr("y", 16*i+50) 
-                  .attr("fill","orange")         // position the top of the rectangle
-                  .attr("height", 10)    // set the height
-                  .attr("width", row_keywords0[i].Frequency/150)    // set the width
-                  ;
-                }else{
-                  rect.append("svg1:rect")       // attach a rectangle
-                  .attr("x", 0)         // position the left of the rectangle
-                  .attr("y", 16*i+50) 
-                  .attr("fill","orange")         // position the top of the rectangle
-                  .attr("height", 10)    // set the height
-                  .attr("width", 0)    // set the width
-                  ;
-                }
-            };*/
-            
-
-            //console.log(row_keywords);
-               
+                  .attr('transform', "rotate(-90)")
+                  ;               
         }
            
       });
