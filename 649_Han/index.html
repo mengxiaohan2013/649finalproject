@@ -273,52 +273,12 @@ var allText;
 //console.log(WordsText);
 var rect= d3.select("#keywords_rect").append("svg:svg").attr("height", 550);
 function drawKeywords(){
-      d3.csv("data/all_keywordsfrequency.csv")
+      /*
+      d3.csv("data/new_all_keywordsfrequency.csv")
       .row(function(d) { 
         return {  Keywords: d.Keywords, 
                   Frequency: +d.Frequency};
       })
-      /*.row(function(d) {
-        //console.log(d);
-        //console.log(WordsText);
-        
-        
-        WordsText = WordsText.concat(d.Keywords)
-        //console.log(d.Keywords);
-        //console.log(WordsText);
-        kWords=d.Keywords.toLowerCase().trim().split(' ')
-
-        for(var i=0; i<kWords.length; i++){
-          console.log(kWords[i]);
-          if(typeof allText[kWords[i]] == 'undefined'){
-            allText[kWords[i]]=1;
-          }
-          else allText[kWords[i]]+=1;
-        }
-        //console.log(kWords.length);
-        //console.log(allText['love']);
-        newallText=getSortedKeys(allText);
-        console.log(newallText)
-        function getSortedKeys(obj) {
-          var keys = []; for(var key in obj) keys.push(key);
-          return keys.sort(function(a,b){return obj[b]-obj[a]});
-        }
-
-        /*
-        var allTextData={}
-        for (var i = 0; i < 30; i++) {
-          allTextData[i]['Keywords'] = newallText[i][0]
-
-        };
-        
-        //for w in kWords:
-          //console.log(w);
-        
-        //console.log(allTextData);
-        
-        return {  Keywords: d.Keywords, 
-                  Frequency: 10};
-      })*/
       .get(function(error, row_keywords) { 
         //console.log(row_keywords[1].Keywords);
          for(var i=0; i<30;i++){
@@ -347,15 +307,19 @@ function drawKeywords(){
         //console.log(allText.indexOf('dh'));
         //console.log(allText)
       });
-      
-      d3.csv("data/topic"+data_num+"_keywordsfrequency.csv")
+      */
+      d3.csv("data/topic"+0+"_keywordfrequency.csv")
       .row(function(d) { 
         return {  Keywords: d.Keywords, 
-                  Frequency: +d.Frequency};
+                  Frequency_all: +d.Frequency_all,
+                  Keyword: d.Keyword, 
+                  Frequency_topic: +d.Frequency_topic
+                  };
       })
       
-      .get(function(error, row_keywords0) { 
-        console.log(allText[0]);
+      .get(function(error, row_keywords0) {
+        console.log(row_keywords0)
+        //console.log(allText[0]);
          for(var i=0; i<30;i++){
              d3.select("#keywords")
                .append("p")
@@ -365,9 +329,26 @@ function drawKeywords(){
                .append("text")
                .style("font-weight", "bold")
                .style("text-anchor", "left")
-               //.text(row_keywords0[i].Keywords)
+               .text(row_keywords0[i].Keyword)
                ;
+
+             rect.append("svg:rect")       // attach a rectangle
+              .attr("x", 0)         // position the left of the rectangle
+              .attr("y", 16*i+50) 
+              .attr("fill","#666")         // position the top of the rectangle
+              .attr("height", 10)    // set the height
+              .attr("width", row_keywords0[i].Frequency_all/100)    // set the width
+              ;
+
+             rect.append("svg1:rect")       // attach a rectangle
+                  .attr("x", 0)         // position the left of the rectangle
+                  .attr("y", 16*i+50) 
+                  .attr("fill","orange")         // position the top of the rectangle
+                  .attr("height", 10)    // set the height
+                  .attr("width", row_keywords0[i].Frequency_topic/100)    // set the width
+                  ;
             //console.log(allText.indexOf('dh'));
+            /*
             for (var j = 0; j < 30; j++) {
               console.log(allText[j].Keywords);
               if(allText[j].Keywords==row_keywords0[i].Keywords){
@@ -376,7 +357,7 @@ function drawKeywords(){
                   .attr("y", 16*i+50) 
                   .attr("fill","orange")         // position the top of the rectangle
                   .attr("height", 10)    // set the height
-                  .attr("width", row_keywords0[i].Frequency/100)    // set the width
+                  .attr("width", row_keywords0[i].Frequency/150)    // set the width
                   ;
                 }else{
                   rect.append("svg1:rect")       // attach a rectangle
@@ -387,7 +368,7 @@ function drawKeywords(){
                   .attr("width", 0)    // set the width
                   ;
                 }
-            };
+            };*/
             
 
             //console.log(row_keywords);
